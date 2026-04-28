@@ -5361,7 +5361,7 @@
     },
     {
         "name": "Glaz Diavola",
-        "id": "glaz-diavola",
+        "id": "glaz-diavola-1",
         "player": "cring",
         "length": "9",
         "version": "2.1",
@@ -5377,7 +5377,7 @@
     },
     {
         "name": "Axinie",
-        "id": "axinie",
+        "id": "axinie-1",
         "player": "SaturMan",
         "length": "119",
         "version": "2.2",
@@ -5444,7 +5444,7 @@
     },
     {
         "name": "Aeternus 15%",
-        "id": "aeternus-15",
+        "id": "aeternus-15-1",
         "player": "Chill Guy",
         "length": "11",
         "version": "2.2",
@@ -7431,7 +7431,7 @@
     },
     {
         "name": "Sakupen Trials",
-        "id": "sakupen-trials",
+        "id": "sakupen-trials-1",
         "player": "Xanii",
         "length": "53",
         "version": "2.1",
@@ -7735,7 +7735,7 @@
     },
     {
         "name": "Cosmic Cyclone",
-        "id": "cosmic-cyclone",
+        "id": "cosmic-cyclone-1",
         "player": "DoSh7t",
         "length": "117",
         "version": "2.1",
