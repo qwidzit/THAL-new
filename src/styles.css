@@ -85,13 +85,15 @@ body { background: oklch(15% 0.005 260); }
     align-items: center;
     gap: 10px;
     background: var(--ink);
-    padding: 8px 14px;
+/*    padding: 8px 14px; */
     flex-shrink: 0;
+    border-radius: 3px;
 }
 .hd__logo-square {
-    width: 16px; height: 16px;
-    background: var(--bg);
+    width: 40px; height: 40px;
+    display: block; object-fit: contain;
     flex-shrink: 0;
+    border-radius: 3px;
 }
 .hd__logo-text {
     color: var(--bg);
@@ -130,7 +132,7 @@ body { background: oklch(15% 0.005 260); }
 
 /* Controls row */
 .hd__controls {
-    display: flex; gap: 12px; align-items: center;
+    display: flex; gap: 12px; align-items: stretch;
     margin-bottom: 16px;
 }
 .hd__search {

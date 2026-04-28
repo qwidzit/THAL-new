@@ -62,11 +62,10 @@ export default function Header({
             <div className="hd__row">
                 <div className="hd__brand">
                     <div className="hd__logo">
-                        <div className="hd__logo-square" />
-                        <span className="hd__logo-text">THAL</span>
+                        <img src="/THAL.png" alt="" className="hd__logo-square" />
                     </div>
                     <div className="hd__brand-meta">
-                        <div className="hd__brand-title">Hardest Achievements</div>
+                        <div className="hd__brand-title">The Hardest Achievements List</div>
                         <div className="hd__brand-sub">{totalCount} entries · updated 3h ago</div>
                     </div>
                 </div>
