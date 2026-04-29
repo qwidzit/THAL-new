@@ -21,27 +21,6 @@
     "_tokens": "kocmoc unleashed 19 91 arshadow kocmoc unleashed 19 91"
   },
   {
-    "name": "GRIEF (Apr. 2025) 56-100%, 67% in a row",
-    "id": "grief-apr.-2025-56-100-67-in-a-row",
-    "player": "Doggie",
-    "date": "2025-04-23",
-    "length": 200,
-    "version": 2.2,
-    "submitter": "TYATYAPKA",
-    "video": "https://youtu.be/aqg-2kThaSc",
-    "showcaseVideo": "https://youtu.be/bQXnREyaO34",
-    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/grief-unbuffed1.avif",
-    "tags": [
-      "Level",
-      "Consistency",
-      "2P",
-      "CBF"
-    ],
-    "rank": 2,
-    "_searchText": "WjNKcFpXWWdZWEJ5SURJd01qVWdOVFlnTVRBd0lEWTNJR2x1SUdFZ2NtOTNJR1J2WjJkcFpTQm5jbWxsWmlCaGNISWdNakF5TlNBMU5pQXhNREFnTmpjZ2FXNGdZU0J5YjNjZ2JHVjJaV3dnWTI5dWMybHpkR1Z1WTNrZ01uQWdZMkpt",
-    "_tokens": "grief apr 2025 56 100 67 in a row doggie grief apr 2025 56 100 67 in a row"
-  },
-  {
     "name": "GRIEF 83%",
     "id": "grief-83",
     "player": "Doggie",
@@ -59,9 +38,30 @@
       "CBF",
       "Tentative"
     ],
-    "rank": 3,
+    "rank": 2,
     "_searchText": "Z3JpZWYgODMgZG9nZ2llIGdyaWVmIDgzIGxldmVsIHByb2dyZXNzIDJwIGNiZiB0ZW50YXRpdmU=",
     "_tokens": "grief 83 doggie grief 83"
+  },
+  {
+    "name": "GRIEF (Apr. 2025) 56-100%, 67% in a row",
+    "id": "grief-apr.-2025-56-100-67-in-a-row",
+    "player": "Doggie",
+    "date": "2025-04-23",
+    "length": 200,
+    "version": 2.2,
+    "submitter": "TYATYAPKA",
+    "video": "https://youtu.be/aqg-2kThaSc",
+    "showcaseVideo": "https://youtu.be/bQXnREyaO34",
+    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/grief-unbuffed1.avif",
+    "tags": [
+      "Level",
+      "Consistency",
+      "2P",
+      "CBF"
+    ],
+    "rank": 3,
+    "_searchText": "WjNKcFpXWWdZWEJ5SURJd01qVWdOVFlnTVRBd0lEWTNJR2x1SUdFZ2NtOTNJR1J2WjJkcFpTQm5jbWxsWmlCaGNISWdNakF5TlNBMU5pQXhNREFnTmpjZ2FXNGdZU0J5YjNjZ2JHVjJaV3dnWTI5dWMybHpkR1Z1WTNrZ01uQWdZMkpt",
+    "_tokens": "grief apr 2025 56 100 67 in a row doggie grief apr 2025 56 100 67 in a row"
   },
   {
     "name": "GRIEF 25-98%",
