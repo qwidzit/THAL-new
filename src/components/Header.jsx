@@ -1,6 +1,50 @@
-﻿import { useState } from 'react'
+﻿import { useState, useRef, useEffect } from 'react'
 
 const TABS = ['MAIN', 'PENDING', 'REMOVED', 'TIMELINE']
+
+const SORT_OPTS = [
+    { value: 'rank',   label: 'Rank'   },
+    { value: 'name',   label: 'Name'   },
+    { value: 'length', label: 'Length' },
+    { value: 'date',   label: 'Date'   },
+]
+
+function SortSelect({ sort, setSort }) {
+    const [open, setOpen] = useState(false)
+    const ref = useRef(null)
+
+    useEffect(() => {
+        const handler = e => {
+            if (ref.current && !ref.current.contains(e.target)) setOpen(false)
+        }
+        document.addEventListener('mousedown', handler)
+        return () => document.removeEventListener('mousedown', handler)
+    }, [])
+
+    const label = SORT_OPTS.find(o => o.value === sort)?.label ?? 'Rank'
+
+    return (
+        <div className="hd__sel" ref={ref}>
+            <button className="hd__sel-btn" onClick={() => setOpen(o => !o)}>
+                {label}
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                    <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+            </button>
+            {open && (
+                <div className="hd__sel-menu">
+                    {SORT_OPTS.map(o => (
+                        <button
+                            key={o.value}
+                            className={`hd__sel-item${sort === o.value ? ' is-active' : ''}`}
+                            onClick={() => { setSort(o.value); setOpen(false) }}
+                        >{o.label}</button>
+                    ))}
+                </div>
+            )}
+        </div>
+    )
+}
 
 export default function Header({
                                    mode, setMode,
@@ -13,6 +57,7 @@ export default function Header({
                                    totalCount,
                                }) {
     const [showFilters, setShowFilters] = useState(false)
+    const [showNav, setShowNav] = useState(false)
 
     return (
         <>
@@ -21,7 +66,6 @@ export default function Header({
                     <div className="hd__brand">
                         <div className="hd__logo">
                             <img src="/THAL.png" alt="" className="hd__logo-square" />
-                            <span className="hd__logo-text">THAL</span>
                         </div>
                         <div className="hd__brand-meta">
                             <div className="hd__brand-title">Hardest Achievements</div>
@@ -40,6 +84,13 @@ export default function Header({
                             </button>
                         ))}
                     </nav>
+
+                    <button className="hd__nav-mobile-btn" onClick={() => setShowNav(true)}>
+                        <span>{active}</span>
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                            <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+                        </svg>
+                    </button>
                 </div>
 
                 <div className="hd__controls">
@@ -57,12 +108,7 @@ export default function Header({
 
                     <div className="hd__sort-group">
                         <span className="hd__sort-lbl">SORT</span>
-                        <select value={sort} onChange={e => setSort(e.target.value)}>
-                            <option value="rank">Rank</option>
-                            <option value="name">Name</option>
-                            <option value="length">Length</option>
-                            <option value="date">Date</option>
-                        </select>
+                        <SortSelect sort={sort} setSort={setSort} />
                         <button className="hd__sort-dir" onClick={setSortDir}>
                             {sortDir === 'asc' ? '↑' : '↓'}
                         </button>
@@ -85,7 +131,6 @@ export default function Header({
                             <line x1="8" y1="12" x2="16" y2="12"/>
                             <line x1="11" y1="18" x2="13" y2="18"/>
                         </svg>
-                        Filters
                         {activeTags.size > 0 && <span className="hd__filter-badge">{activeTags.size}</span>}
                     </button>
                 </div>
@@ -106,8 +151,9 @@ export default function Header({
                 </div>
             </header>
 
-            {showFilters && (
-                <div className="flt-overlay" onClick={() => setShowFilters(false)}>
+            {/* Mobile: nav + mode drawer */}
+            {showNav && (
+                <div className="flt-overlay" onClick={() => setShowNav(false)}>
                     <div className="flt-drawer" onClick={e => e.stopPropagation()}>
                         <div className="flt-drawer__handle" />
 
@@ -124,6 +170,28 @@ export default function Header({
                                 >Platformer</button>
                             </div>
                         </div>
+
+                        <div className="flt-section">
+                            <span className="flt-lbl">PAGE</span>
+                            <div className="flt-tabs">
+                                {TABS.map(t => (
+                                    <button
+                                        key={t}
+                                        className={`flt-tab${active === t ? ' is-active' : ''}`}
+                                        onClick={() => { setActive(t); setShowNav(false) }}
+                                    >{t}</button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Mobile: sort + filter drawer */}
+            {showFilters && (
+                <div className="flt-overlay" onClick={() => setShowFilters(false)}>
+                    <div className="flt-drawer" onClick={e => e.stopPropagation()}>
+                        <div className="flt-drawer__handle" />
 
                         <div className="flt-section">
                             <span className="flt-lbl">SORT</span>

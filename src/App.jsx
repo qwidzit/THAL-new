@@ -52,7 +52,7 @@ export default function App() {
     const [search, setSearch] = useState('')
     const [sort, setSort] = useState('rank')
     const [sortDir, setSortDir] = useState('asc')
-    const [activeTags, setActiveTags] = useState(new Set(['Level']))
+    const [activeTags, setActiveTags] = useState(new Set())
     const [selectedLevel, setSelectedLevel] = useState(null)
 
     function navigate(newMode, newActive) {
@@ -79,7 +79,7 @@ export default function App() {
     }
 
     useEffect(() => {
-        setActiveTags(new Set(mode === 'classic' ? ['Level'] : ['Platformer']))
+        setActiveTags(new Set())
         setSort('rank')
         setSortDir('asc')
     }, [mode])

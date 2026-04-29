@@ -21,6 +21,116 @@ body { background: oklch(15% 0.005 260); }
     --mono:     "JetBrains Mono", ui-monospace, Menlo, monospace;
 }
 
+/* ═══════════════════════════════════════════════════
+   FIXES & ADDITIONS
+═══════════════════════════════════════════════════ */
+
+/* Nav tab active → gold */
+.hd__nav-btn.is-active { background: var(--acc); color: var(--bg); font-weight: 700; }
+
+/* Logo: image only, 40x40, no background box */
+.hd__logo { background: transparent; padding: 0; gap: 0; }
+.hd__logo-square { width: 40px; height: 40px; object-fit: contain; background: transparent; }
+
+/* Custom sort dropdown */
+.hd__sel { position: relative; }
+.hd__sel-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: none;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 4px 8px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.hd__sel-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    background: var(--bg-2);
+    border: 1px solid var(--line-2);
+    border-radius: 6px;
+    padding: 4px;
+    z-index: 200;
+    min-width: 110px;
+    box-shadow: 0 8px 24px oklch(0% 0 0 / 0.4);
+}
+.hd__sel-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    color: var(--ink-2);
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background .12s, color .12s;
+}
+.hd__sel-item:hover { background: var(--bg-3); color: var(--ink); }
+.hd__sel-item.is-active { color: var(--acc); }
+
+/* Mobile nav button (desktop: hidden) */
+.hd__nav-mobile-btn { display: none; }
+
+/* Nav+mode drawer tabs */
+.flt-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+.flt-tab {
+    background: var(--bg-3);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--ink-2);
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    padding: 12px;
+    cursor: pointer;
+    text-align: center;
+    transition: background .15s, color .15s, border-color .15s;
+}
+.flt-tab:hover { color: var(--ink); border-color: var(--line-2); }
+.flt-tab.is-active { background: var(--acc); color: var(--bg); border-color: var(--acc); }
+
+/* ── Mobile overrides ──────────────────────────── */
+@media (max-width: 640px) {
+    .hd__nav { display: none; }
+    .hd__nav-mobile-btn {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background: var(--bg-2);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        color: var(--ink);
+        font-family: var(--mono);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        padding: 7px 11px;
+        cursor: pointer;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .hd__filter-btn { padding: 0 10px; }
+
+    /* Mode toggle inside drawers must stay visible */
+    .flt-drawer .hd__mode-toggle { display: flex; }
+}
+
 /* ── App Shell ─────────────────────────────────────────── */
 .app {
     position: relative;
