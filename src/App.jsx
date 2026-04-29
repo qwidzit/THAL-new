@@ -164,13 +164,14 @@ export default function App() {
 
             {selectedLevel && (
                 <LevelModal level={selectedLevel} onClose={() => setSelectedLevel(null)} />
-                {showScrollTop && (
-                    <button
-                        className="scroll-top-btn"
-                        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                        aria-label="Go to top"
-                    >↑ TOP</button>
-                )}
+            )}
+
+            {showScrollTop && (
+                <button
+                    className="scroll-top-btn"
+                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                    aria-label="Go to top"
+                >↑ TOP</button>
             )}
         </div>
     )
