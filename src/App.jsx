@@ -54,6 +54,7 @@ export default function App() {
     const [sortDir, setSortDir] = useState('asc')
     const [activeTags, setActiveTags] = useState(new Set())
     const [selectedLevel, setSelectedLevel] = useState(null)
+    const [showScrollTop, setShowScrollTop] = useState(false)
 
     function navigate(newMode, newActive) {
         const modeSlug = newMode === 'platformer' ? 'plat' : 'classic'
@@ -121,6 +122,16 @@ export default function App() {
         return data
     }, [rawData, search, activeTags, sort, sortDir])
 
+    useEffect(() => {
+        const update = () => {
+            const cards = document.querySelectorAll('.card')
+            setShowScrollTop(cards.length >= 20 && cards[19].getBoundingClientRect().bottom < 0)
+        }
+        window.addEventListener('scroll', update, { passive: true })
+        update()
+        return () => window.removeEventListener('scroll', update)
+    }, [filteredData])
+
     const bgImage = rawData[0]?.thumbnail ?? null
 
     return (
@@ -153,6 +164,13 @@ export default function App() {
 
             {selectedLevel && (
                 <LevelModal level={selectedLevel} onClose={() => setSelectedLevel(null)} />
+                {showScrollTop && (
+                    <button
+                        className="scroll-top-btn"
+                        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                        aria-label="Go to top"
+                    >↑ TOP</button>
+                )}
             )}
         </div>
     )

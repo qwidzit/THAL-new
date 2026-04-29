@@ -921,3 +921,45 @@ body { background: oklch(15% 0.005 260); }
     .modal__links { flex-direction: column; }
     .modal__link { justify-content: center; }
 }
+
+/* ═══════════════════════════════════════════════════
+   NAV / SCROLL-TOP FIXES
+═══════════════════════════════════════════════════ */
+
+/* Nav tab active → gold (override) */
+.hd__nav-btn.is-active {
+    background: var(--acc);
+    color: var(--bg);
+    font-weight: 700;
+}
+
+/* Scroll-to-top button */
+.scroll-top-btn {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 150;
+    background: var(--acc);
+    border: none;
+    border-radius: 20px;
+    color: var(--bg);
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    padding: 10px 22px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px oklch(0% 0 0 / 0.45);
+    transition: filter 0.15s, transform 0.15s;
+    white-space: nowrap;
+}
+.scroll-top-btn:hover {
+    filter: brightness(1.12);
+    transform: translateX(-50%) translateY(-2px);
+}
+
+/* Force-hide desktop nav tabs on mobile (belt-and-suspenders) */
+@media (max-width: 640px) {
+    .hd__nav { display: none !important; }
+}
