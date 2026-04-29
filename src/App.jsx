@@ -36,14 +36,38 @@ const DATA_MAP = {
     },
 }
 
+function parseRoute() {
+    const parts = window.location.pathname.split('/').filter(Boolean)
+    const modeMap = { classic: 'classic', plat: 'platformer' }
+    const tabMap = { pending: 'PENDING', removed: 'REMOVED', timeline: 'TIMELINE' }
+    const mode = modeMap[parts[0]] || 'classic'
+    const active = tabMap[parts[1]] || 'MAIN'
+    return { mode, active }
+}
+
 export default function App() {
-    const [mode, setMode] = useState('classic')
-    const [active, setActive] = useState('MAIN')
+    const [route, setRoute] = useState(parseRoute)
+    const { mode, active } = route
+
     const [search, setSearch] = useState('')
     const [sort, setSort] = useState('rank')
     const [sortDir, setSortDir] = useState('asc')
-    const [activeTags, setActiveTags] = useState(new Set())   // ← no default tags
+    const [activeTags, setActiveTags] = useState(new Set(['Level']))
     const [selectedLevel, setSelectedLevel] = useState(null)
+
+    function navigate(newMode, newActive) {
+        const modeSlug = newMode === 'platformer' ? 'plat' : 'classic'
+        const tabSlug = newActive === 'MAIN' ? '' : newActive.toLowerCase()
+        const path = tabSlug ? `/${modeSlug}/${tabSlug}` : `/${modeSlug}`
+        history.pushState({}, '', path)
+        setRoute({ mode: newMode, active: newActive })
+    }
+
+    useEffect(() => {
+        const handler = () => setRoute(parseRoute())
+        window.addEventListener('popstate', handler)
+        return () => window.removeEventListener('popstate', handler)
+    }, [])
 
     const allTags = mode === 'classic' ? CLASSIC_TAGS : PLATFORMER_TAGS
     const rawData = DATA_MAP[mode][active] || []
@@ -55,7 +79,7 @@ export default function App() {
     }
 
     useEffect(() => {
-        setActiveTags(new Set())   // ← no default tags on mode switch
+        setActiveTags(new Set(mode === 'classic' ? ['Level'] : ['Platformer']))
         setSort('rank')
         setSortDir('asc')
     }, [mode])
@@ -108,8 +132,8 @@ export default function App() {
             </div>
 
             <Header
-                mode={mode} setMode={setMode}
-                active={active} setActive={setActive}
+                mode={mode} setMode={m => navigate(m, active)}
+                active={active} setActive={a => navigate(mode, a)}
                 search={search} setSearch={setSearch}
                 sort={sort} setSort={setSort}
                 sortDir={sortDir} setSortDir={() => setSortDir(d => d === 'asc' ? 'desc' : 'asc')}
