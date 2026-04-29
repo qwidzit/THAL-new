@@ -13,7 +13,7 @@ export default function LevelCard({ achievement: a, index, isTimeline, onClick }
 
     return (
         <article
-            className={`card${isPodium ? ' is-podium' : ''}${isFirst ? ' is-first' : ''}`}
+            className={`card${isPodium ? ' is-podium' : ''}${isFirst ? ' is-first' : ''}${isTimeline ? ' is-timeline' : ''}`}
             onClick={() => onClick(a)}
         >
             <div className="card__content">
