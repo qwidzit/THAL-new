@@ -49,7 +49,7 @@ function parseRoute() {
     const parts = window.location.pathname.split('/').filter(Boolean)
     if (parts.length === 0 || parts[0] === 'home') return { mode: 'classic', active: 'HOME' }
     if (parts[0] === 'leaderboard') return { mode: 'classic', active: 'LEADERBOARD' }
-    if (parts[0] === 'mod-leaderboard') return { mode: 'classic', active: 'MODLB' }
+    if (parts[0] === 'mod-lb') return { mode: 'classic', active: 'MODLB' }
     const modeMap = { classic: 'classic', plat: 'platformer' }
     const tabMap = { pending: 'PENDING', removed: 'REMOVED', timeline: 'TIMELINE' }
     const mode = modeMap[parts[0]] || 'classic'
