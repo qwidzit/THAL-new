@@ -132,7 +132,7 @@ export default function App() {
     useEffect(() => {
         const update = () => {
             const cards = document.querySelectorAll('.card')
-            setShowScrollTop(cards.length >= 20 && cards[19].getBoundingClientRect().bottom < 0)
+            setShowScrollTop(cards.length >= 10 && cards[9].getBoundingClientRect().bottom < 0)
         }
         window.addEventListener('scroll', update, { passive: true })
         update()
@@ -161,7 +161,7 @@ export default function App() {
             />
 
             {active === 'HOME'
-                ? <HomePage />
+                ? <HomePage totalCount={achievementsData.length + pendingData.length + legacyData.length + platformersData.length} />
                 : <LevelList
                     data={filteredData}
                     totalCount={rawData.length}

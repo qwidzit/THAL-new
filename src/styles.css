@@ -1081,6 +1081,8 @@ body { background: oklch(15% 0.005 260); }
 
 /* ── Home page ──────────────────────────────────── */
 .home {
+    position: relative;
+    z-index: 1;
     max-width: 900px;
     margin: 0 auto;
     padding: 48px 24px 80px;
@@ -1098,12 +1100,6 @@ body { background: oklch(15% 0.005 260); }
     padding: 40px 0 8px;
 }
 
-.home__logo {
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
-}
-
 .home__title {
     font-size: clamp(24px, 5vw, 40px);
     font-weight: 800;
@@ -1118,6 +1114,18 @@ body { background: oklch(15% 0.005 260); }
     max-width: 480px;
     line-height: 1.6;
     margin: 0;
+}
+
+.home__count {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    color: var(--ink-3);
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 4px 14px;
 }
 
 .home__cols {

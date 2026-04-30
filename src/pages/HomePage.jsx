@@ -38,16 +38,18 @@ function ChangeEntry({ entry }) {
     )
 }
 
-export default function HomePage() {
+export default function HomePage({ totalCount }) {
     const changes = [...changelogData].reverse()
     return (
         <div className="home">
             <section className="home__hero">
-                <img src="/THAL.png" alt="THAL" className="home__logo" />
                 <h1 className="home__title">The Hardest Achievements List</h1>
                 <p className="home__desc">
                     A community-maintained ranking of the most difficult achievements in Geometry Dash.
                 </p>
+                {totalCount != null && (
+                    <span className="home__count">{totalCount} total entries</span>
+                )}
             </section>
 
             <div className="home__cols">
