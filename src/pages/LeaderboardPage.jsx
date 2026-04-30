@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+﻿import { useState, Fragment } from 'react'
 import { xpFor } from '../utils/xp'
 import achievementsData from '../../data/achievements.json'
 import pendingData from '../../data/pending.json'
@@ -40,6 +40,32 @@ const BOARDS = {
 
 const MEDALS = ['gold', 'silver', 'bronze']
 
+function DetailContent({ player, pos }) {
+    return (
+        <>
+            <div className="lb__detail-hd">
+                <div className="lb__detail-left">
+                    <span className="lb__detail-pos">#{pos + 1}</span>
+                    <h2 className="lb__detail-name">{player.name}</h2>
+                </div>
+                <span className="lb__detail-xp">{player.totalXP.toLocaleString()} XP</span>
+            </div>
+            <div className="lb__achs">
+                {player.achievements.map((e, j) => (
+                    <div key={j} className="lb__ach">
+                        <span className="lb__ach-rank">#{e.rank}</span>
+                        <div className="lb__ach-info">
+                            <span className="lb__ach-name">{e.name}</span>
+                            <span className="lb__ach-meta">{SOURCE_LABEL[e._src]} · {fmt(e.date)}</span>
+                        </div>
+                        <span className="lb__ach-xp">+{xpFor(e.rank)}</span>
+                    </div>
+                ))}
+            </div>
+        </>
+    )
+}
+
 export default function LeaderboardPage() {
     const [mode, setMode] = useState('classic')
     const [sel, setSel] = useState(null)
@@ -63,38 +89,27 @@ export default function LeaderboardPage() {
             <div className={`lb__layout${player ? ' has-detail' : ''}`}>
                 <div className="lb__list">
                     {leaderboard.map((p, i) => (
-                        <div key={p.name} className={`lb__row${sel === i ? ' is-sel' : ''}`} onClick={() => setSel(sel === i ? null : i)}>
-                            <span className={`lb__pos${i < 3 ? ' lb__pos--' + MEDALS[i] : ''}`}>{i + 1}</span>
-                            <div className="lb__pinfo">
-                                <span className="lb__pname">{p.name}</span>
-                                <span className="lb__pbest">{p.best.name}</span>
+                        <Fragment key={p.name}>
+                            <div className={`lb__row${sel === i ? ' is-sel' : ''}`} onClick={() => setSel(sel === i ? null : i)}>
+                                <span className={`lb__pos${i < 3 ? ' lb__pos--' + MEDALS[i] : ''}`}>{i + 1}</span>
+                                <div className="lb__pinfo">
+                                    <span className="lb__pname">{p.name}</span>
+                                    <span className="lb__pbest">{p.best.name}</span>
+                                </div>
+                                <span className="lb__xp-total">{p.totalXP.toLocaleString()} <span>XP</span></span>
                             </div>
-                            <span className="lb__xp-total">{p.totalXP.toLocaleString()} <span>XP</span></span>
-                        </div>
+                            {sel === i && (
+                                <div className="lb__detail lb__detail--inline">
+                                    <DetailContent player={p} pos={i} />
+                                </div>
+                            )}
+                        </Fragment>
                     ))}
                 </div>
 
                 {player && (
-                    <div className="lb__detail">
-                        <div className="lb__detail-hd">
-                            <div className="lb__detail-left">
-                                <span className="lb__detail-pos">#{sel + 1}</span>
-                                <h2 className="lb__detail-name">{player.name}</h2>
-                            </div>
-                            <span className="lb__detail-xp">{player.totalXP.toLocaleString()} XP</span>
-                        </div>
-                        <div className="lb__achs">
-                            {player.achievements.map((e, j) => (
-                                <div key={j} className="lb__ach">
-                                    <span className="lb__ach-rank">#{e.rank}</span>
-                                    <div className="lb__ach-info">
-                                        <span className="lb__ach-name">{e.name}</span>
-                                        <span className="lb__ach-meta">{SOURCE_LABEL[e._src]} · {fmt(e.date)}</span>
-                                    </div>
-                                    <span className="lb__ach-xp">+{xpFor(e.rank)}</span>
-                                </div>
-                            ))}
-                        </div>
+                    <div className="lb__detail lb__detail--sidebar">
+                        <DetailContent player={player} pos={sel} />
                     </div>
                 )}
             </div>

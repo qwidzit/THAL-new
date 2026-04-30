@@ -72,7 +72,7 @@ export default function Header({
             <header className="hd">
                 <div className="hd__row">
                     <div className="hd__brand">
-                        <div className="hd__logo">
+                        <div className="hd__logo hd__logo--home" onClick={() => setActive('HOME')}>
                             <img src="/THAL.png" alt="" className="hd__logo-square" />
                         </div>
                         <div className="hd__brand-meta">
