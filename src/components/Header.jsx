@@ -83,7 +83,7 @@ export default function Header({
 
                     <div className="hd__center">
                         <a href="https://discord.gg/REPLACE_ME" className="hd__discord" target="_blank" rel="noopener noreferrer" aria-label="Discord">
-                            <DiscordIcon /> Our Discord Server
+                            <DiscordIcon />
                         </a>
                         <nav className="hd__nav">
                             {TABS.map(t => (
