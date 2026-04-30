@@ -37,6 +37,10 @@ const DATA_MAP = {
     },
 }
 
+const ALL_LISTS_COUNT =
+    achievementsData.length + pendingData.length + legacyData.length +
+    timelineData.length + platformersData.length + platformerTimelineData.length
+
 function parseRoute() {
     const parts = window.location.pathname.split('/').filter(Boolean)
     if (parts.length === 0 || parts[0] === 'home') return { mode: 'classic', active: 'HOME' }
@@ -157,7 +161,7 @@ export default function App() {
                 sortDir={sortDir} setSortDir={() => setSortDir(d => d === 'asc' ? 'desc' : 'asc')}
                 activeTags={activeTags} toggleTag={toggleTag}
                 allTags={allTags}
-                totalCount={rawData.length}
+                totalCount={ALL_LISTS_COUNT}
             />
 
             {active === 'HOME'
