@@ -2,6 +2,7 @@
 import Header from './components/Header'
 import LevelList from './components/LevelList'
 import LevelModal from './components/LevelModal'
+import HomePage from './pages/HomePage'
 
 import achievementsData from '../data/achievements.json'
 import pendingData from '../data/pending.json'
@@ -38,6 +39,7 @@ const DATA_MAP = {
 
 function parseRoute() {
     const parts = window.location.pathname.split('/').filter(Boolean)
+    if (parts.length === 0 || parts[0] === 'home') return { mode: 'classic', active: 'HOME' }
     const modeMap = { classic: 'classic', plat: 'platformer' }
     const tabMap = { pending: 'PENDING', removed: 'REMOVED', timeline: 'TIMELINE' }
     const mode = modeMap[parts[0]] || 'classic'
@@ -57,6 +59,11 @@ export default function App() {
     const [showScrollTop, setShowScrollTop] = useState(false)
 
     function navigate(newMode, newActive) {
+        if (newActive === 'HOME') {
+            history.pushState({}, '', '/')
+            setRoute({ mode: newMode, active: 'HOME' })
+            return
+        }
         const modeSlug = newMode === 'platformer' ? 'plat' : 'classic'
         const tabSlug = newActive === 'MAIN' ? '' : newActive.toLowerCase()
         const path = tabSlug ? `/${modeSlug}/${tabSlug}` : `/${modeSlug}`
@@ -71,7 +78,7 @@ export default function App() {
     }, [])
 
     const allTags = mode === 'classic' ? CLASSIC_TAGS : PLATFORMER_TAGS
-    const rawData = DATA_MAP[mode][active] || []
+    const rawData = active === 'HOME' ? [] : (DATA_MAP[mode][active] || [])
 
     const toggleTag = (t) => {
         const next = new Set(activeTags)
@@ -132,7 +139,7 @@ export default function App() {
         return () => window.removeEventListener('scroll', update)
     }, [filteredData])
 
-    const bgImage = rawData[0]?.thumbnail ?? null
+    const bgImage = active !== 'HOME' ? (rawData[0]?.thumbnail ?? null) : null
 
     return (
         <div className="app">
@@ -153,14 +160,17 @@ export default function App() {
                 totalCount={rawData.length}
             />
 
-            <LevelList
-                data={filteredData}
-                totalCount={rawData.length}
-                activeTags={activeTags}
-                toggleTag={toggleTag}
-                isTimeline={active === 'TIMELINE'}
-                onCardClick={setSelectedLevel}
-            />
+            {active === 'HOME'
+                ? <HomePage />
+                : <LevelList
+                    data={filteredData}
+                    totalCount={rawData.length}
+                    activeTags={activeTags}
+                    toggleTag={toggleTag}
+                    isTimeline={active === 'TIMELINE'}
+                    onCardClick={setSelectedLevel}
+                />
+            }
 
             {selectedLevel && (
                 <LevelModal level={selectedLevel} onClose={() => setSelectedLevel(null)} />

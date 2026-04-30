@@ -1,6 +1,6 @@
 ﻿import { useState, useRef, useEffect } from 'react'
 
-const TABS = ['MAIN', 'PENDING', 'REMOVED', 'TIMELINE']
+const TABS = ['HOME', 'MAIN', 'PENDING', 'REMOVED', 'TIMELINE']
 
 const SORT_OPTS = [
     { value: 'rank',   label: 'Rank'   },
@@ -93,7 +93,7 @@ export default function Header({
                     </button>
                 </div>
 
-                <div className="hd__controls">
+                {active !== 'HOME' && <div className="hd__controls">
                     <div className="hd__search">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
                             <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
@@ -133,22 +133,24 @@ export default function Header({
                         </svg>
                         {activeTags.size > 0 && <span className="hd__filter-badge">{activeTags.size}</span>}
                     </button>
-                </div>
+                </div>}
 
-                <div className="hd__filters">
-                    <span className="hd__fgroup-lbl">FILTER</span>
-                    <div className="hd__chips">
-                        {allTags.map(t => (
-                            <button
-                                key={t}
-                                className={`hd__chip${activeTags.has(t) ? ' is-on' : ''}`}
-                                onClick={() => toggleTag(t)}
-                            >
-                                {t}
-                            </button>
-                        ))}
+                {active !== 'HOME' && (
+                    <div className="hd__filters">
+                        <span className="hd__fgroup-lbl">FILTER</span>
+                        <div className="hd__chips">
+                            {allTags.map(t => (
+                                <button
+                                    key={t}
+                                    className={`hd__chip${activeTags.has(t) ? ' is-on' : ''}`}
+                                    onClick={() => toggleTag(t)}
+                                >
+                                    {t}
+                                </button>
+                            ))}
+                        </div>
                     </div>
-                </div>
+                )}
             </header>
 
             {/* Mobile: nav + mode drawer */}

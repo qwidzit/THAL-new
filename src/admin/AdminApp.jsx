@@ -2,6 +2,7 @@
 import AdminLogin from './AdminLogin'
 import AdminList from './AdminList'
 import AdminAddEntry from './AdminAddEntry'
+import AdminChangelog from './AdminChangelog'
 import './admin.css'
 
 export default function AdminApp() {
@@ -26,6 +27,10 @@ export default function AdminApp() {
                 <nav className="adm__nav">
                     <button className={view === 'list' ? 'is-active' : ''} onClick={() => setView('list')}>Manage List</button>
                     <button className={view === 'add' ? 'is-active' : ''} onClick={() => setView('add')}>Add Entry</button>
+                    <button
+                        className={`adm-btn${view === 'changelog' ? ' adm-btn--active' : ''}`}
+                        onClick={() => setView('changelog')}
+                    >Changelog</button>
                 </nav>
                 <button className="adm__logout" onClick={() => {
                     sessionStorage.removeItem('thal-admin-auth')
@@ -35,6 +40,7 @@ export default function AdminApp() {
 
             {view === 'list' && <AdminList auth={auth} dataset={dataset} setDataset={setDataset} />}
             {view === 'add' && <AdminAddEntry auth={auth} dataset={dataset} setDataset={setDataset} />}
+            {view === 'changelog' && (<AdminChangelog token={token} />)}
         </div>
     )
 }

@@ -1,5 +1,48 @@
 ﻿import { useState, useEffect, useRef } from 'react'
 
+import { useState, useEffect, useRef, useCallback } from 'react'
+
+let _idSeq = 0
+function genId() {
+    return `${Date.now()}-${++_idSeq}-${Math.random().toString(36).slice(2, 6)}`
+}
+
+function entryKey(e) {
+    return e.id ?? `${e.name}|${e.player}`
+}
+
+function detectChanges(original, current, fileKey) {
+    const origMap = new Map(original.map(e => [entryKey(e), e]))
+    const currMap = new Map(current.map(e => [entryKey(e), e]))
+    const ts = new Date().toISOString()
+    const changes = []
+
+    for (const [k, e] of currMap) {
+        if (!origMap.has(k)) {
+            changes.push({ id: genId(), timestamp: ts, type: 'added', levelName: e.name, player: e.player, fileKey, rank: e.rank })
+        }
+    }
+    for (const [k, e] of origMap) {
+        if (!currMap.has(k)) {
+            changes.push({ id: genId(), timestamp: ts, type: 'removed', levelName: e.name, player: e.player, fileKey, rank: e.rank })
+        }
+    }
+
+    const moves = []
+    for (const [k, curr] of currMap) {
+        const orig = origMap.get(k)
+        if (!orig) continue
+        const delta = Math.abs((curr.rank ?? 0) - (orig.rank ?? 0))
+        if (delta >= 3) moves.push({ curr, orig, delta })
+    }
+    moves.sort((a, b) => b.delta - a.delta)
+    for (const { curr, orig } of moves.slice(0, 5)) {
+        changes.push({ id: genId(), timestamp: ts, type: 'moved', levelName: curr.name, player: curr.player, fileKey, fromRank: orig.rank, toRank: curr.rank })
+    }
+
+    return changes
+}
+
 const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
 function fmt(iso) {
     if (!iso) return '—'
@@ -153,6 +196,7 @@ export default function AdminList({ token, fileKey }) {
     const [dirty, setDirty] = useState(false)
     const [editingIdx, setEditingIdx] = useState(null)
     const dragIdx = useRef(null)
+    const originalRef = useRef([])
 
     useEffect(() => {
         setLoading(true)
@@ -163,7 +207,7 @@ export default function AdminList({ token, fileKey }) {
             headers: { Authorization: 'Basic ' + token },
         })
             .then(r => r.json())
-            .then(d => { setEntries(d); setLoading(false) })
+            .then(d => { setEntries(d); originalRef.current = d; setLoading(false) })
             .catch(() => { setStatus('Failed to load data'); setLoading(false) })
     }, [fileKey, token])
 
@@ -210,6 +254,23 @@ export default function AdminList({ token, fileKey }) {
             })
             const data = await res.json()
             if (res.ok) {
+                const newChanges = detectChanges(originalRef.current, entries, fileKey)
+                if (newChanges.length > 0) {
+                    try {
+                        const clRes = await fetch('/api/data?file=changelog', {
+                            headers: { Authorization: 'Basic ' + token },
+                        })
+                        const currentLog = await clRes.json()
+                        await fetch('/api/save?file=changelog', {
+                            method: 'POST',
+                            headers: { Authorization: 'Basic ' + token, 'Content-Type': 'application/json' },
+                            body: JSON.stringify([...currentLog, ...newChanges]),
+                        })
+                    } catch {
+                        // changelog update failure is non-fatal
+                    }
+                }
+                originalRef.current = entries
                 setStatus('Saved! Rebuild triggered (~30s)')
                 setDirty(false)
             } else {
@@ -220,7 +281,7 @@ export default function AdminList({ token, fileKey }) {
         }
         setSaving(false)
     }
-
+    
     if (loading) return <div className="adm-status">Loading…</div>
 
     return (
