@@ -3,6 +3,7 @@ import Header from './components/Header'
 import LevelList from './components/LevelList'
 import LevelModal from './components/LevelModal'
 import HomePage from './pages/HomePage'
+import LeaderboardPage from './pages/LeaderboardPage'
 
 import achievementsData from '../data/achievements.json'
 import pendingData from '../data/pending.json'
@@ -38,11 +39,15 @@ const DATA_MAP = {
 }
 
 const ALL_LISTS_COUNT =
-    achievementsData.length + pendingData.length + legacyData.length + platformersData.length
+    achievementsData.length + pendingData.length + legacyData.length +
+    timelineData.length + platformersData.length + platformerTimelineData.length
+
+const NO_LIST = new Set(['HOME', 'LEADERBOARD'])
 
 function parseRoute() {
     const parts = window.location.pathname.split('/').filter(Boolean)
     if (parts.length === 0 || parts[0] === 'home') return { mode: 'classic', active: 'HOME' }
+    if (parts[0] === 'leaderboard') return { mode: 'classic', active: 'LEADERBOARD' }
     const modeMap = { classic: 'classic', plat: 'platformer' }
     const tabMap = { pending: 'PENDING', removed: 'REMOVED', timeline: 'TIMELINE' }
     const mode = modeMap[parts[0]] || 'classic'
@@ -67,6 +72,11 @@ export default function App() {
             setRoute({ mode: newMode, active: 'HOME' })
             return
         }
+        if (newActive === 'LEADERBOARD') {
+            history.pushState({}, '', '/leaderboard')
+            setRoute({ mode: newMode, active: 'LEADERBOARD' })
+            return
+        }
         const modeSlug = newMode === 'platformer' ? 'plat' : 'classic'
         const tabSlug = newActive === 'MAIN' ? '' : newActive.toLowerCase()
         const path = tabSlug ? `/${modeSlug}/${tabSlug}` : `/${modeSlug}`
@@ -81,7 +91,7 @@ export default function App() {
     }, [])
 
     const allTags = mode === 'classic' ? CLASSIC_TAGS : PLATFORMER_TAGS
-    const rawData = active === 'HOME' ? [] : (DATA_MAP[mode][active] || [])
+    const rawData = NO_LIST.has(active) ? [] : (DATA_MAP[mode][active] || [])
 
     const toggleTag = (t) => {
         const next = new Set(activeTags)
@@ -142,7 +152,7 @@ export default function App() {
         return () => window.removeEventListener('scroll', update)
     }, [filteredData])
 
-    const bgImage = active !== 'HOME' ? (rawData[0]?.thumbnail ?? null) : null
+    const bgImage = !NO_LIST.has(active) ? (rawData[0]?.thumbnail ?? null) : null
 
     return (
         <div className="app">
@@ -165,14 +175,16 @@ export default function App() {
 
             {active === 'HOME'
                 ? <HomePage totalCount={achievementsData.length + pendingData.length + legacyData.length + platformersData.length} />
-                : <LevelList
-                    data={filteredData}
-                    totalCount={rawData.length}
-                    activeTags={activeTags}
-                    toggleTag={toggleTag}
-                    isTimeline={active === 'TIMELINE'}
-                    onCardClick={setSelectedLevel}
-                />
+                : active === 'LEADERBOARD'
+                    ? <LeaderboardPage />
+                    : <LevelList
+                        data={filteredData}
+                        totalCount={rawData.length}
+                        activeTags={activeTags}
+                        toggleTag={toggleTag}
+                        isTimeline={active === 'TIMELINE'}
+                        onCardClick={setSelectedLevel}
+                    />
             }
 
             {selectedLevel && (
