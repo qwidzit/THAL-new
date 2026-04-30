@@ -963,3 +963,89 @@ body { background: oklch(15% 0.005 260); }
 @media (max-width: 640px) {
     .hd__nav { display: none !important; }
 }
+
+/* ═══════════════════════════════════════════════════
+   4-FIX PATCH
+═══════════════════════════════════════════════════ */
+
+/* 1. Space between player and tags on card */
+.card__detail { gap: 8px; }
+
+/* 2. Sort dir button stretches to match sort group height */
+.hd__sort-group { align-items: stretch; }
+.hd__sort-dir { width: 28px; height: auto; align-self: stretch; }
+.hd__sort-lbl { align-self: center; }
+.hd__sel-btn { height: 100%; }
+
+/* 3. Mode toggle in drawer: shrink to content width */
+.flt-drawer .hd__mode-toggle { width: fit-content; }
+
+/* 4. Modal thumbnail: always rendered, full width, X inside it */
+.modal__thumb {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    background: var(--bg-3);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+/* No image: collapse to just the close button area */
+.modal__thumb:not(:has(img)) {
+    height: 52px;
+    background: transparent;
+}
+.modal__thumb:not(:has(img)) .modal__thumb-fade { display: none; }
+
+/* Close button now lives inside the thumb */
+.modal__close {
+    position: absolute;
+    top: 14px; right: 14px;
+    z-index: 10;
+}
+
+@media (max-width: 640px) {
+    .modal__thumb { height: 180px; }
+    .modal__thumb:not(:has(img)) { height: 52px; }
+}
+
+/* ── Mobile sort custom controls ───────────────── */
+.flt-sort-btns {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.flt-sort-btn {
+    background: var(--bg-3);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--ink-2);
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    padding: 12px;
+    cursor: pointer;
+    text-align: center;
+    transition: background .15s, color .15s, border-color .15s;
+}
+.flt-sort-btn:hover { color: var(--ink); border-color: var(--line-2); }
+.flt-sort-btn.is-active { background: var(--acc); color: var(--bg); border-color: var(--acc); }
+
+.flt-dir-btn {
+    margin-top: 8px;
+    width: 100%;
+    background: var(--bg-3);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--ink-2);
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 11px;
+    cursor: pointer;
+    text-align: center;
+    transition: background .15s, color .15s, border-color .15s;
+}
+.flt-dir-btn:hover { color: var(--ink); border-color: var(--line-2); }

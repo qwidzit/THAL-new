@@ -8,44 +8,6 @@ function formatDate(iso) {
     return `${d.getDate()} ${MONTHS[d.getMonth()]} ${String(d.getFullYear()).slice(2)}`
 }
 
-function getYouTubeEmbed(url) {
-    if (!url) return null
-    const timeMatch = url.match(/[?&]t=(\d+)/)
-    const start = timeMatch ? timeMatch[1] : null
-
-    const patterns = [
-        /youtu\.be\/([a-zA-Z0-9_-]{11})/,
-        /youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/,
-        /youtube\.com\/live\/([a-zA-Z0-9_-]{11})/,
-        /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
-    ]
-    let videoId = null
-    for (const p of patterns) {
-        const m = url.match(p)
-        if (m) { videoId = m[1]; break }
-    }
-    if (!videoId) return null
-    return `https://www.youtube.com/embed/${videoId}${start ? `?start=${start}` : ''}`
-}
-
-function VideoEmbed({ url, label }) {
-    const embedUrl = getYouTubeEmbed(url)
-    if (!embedUrl) return null
-    return (
-        <div className="modal__embed-section">
-            <span className="modal__embed-label">{label}</span>
-            <div className="modal__embed">
-                <iframe
-                    src={embedUrl}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    title={label}
-                />
-            </div>
-        </div>
-    )
-}
-
 export default function LevelModal({ level: a, onClose }) {
     useEffect(() => {
         const onKey = (e) => { if (e.key === 'Escape') onClose() }
@@ -60,14 +22,12 @@ export default function LevelModal({ level: a, onClose }) {
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal" onClick={e => e.stopPropagation()}>
-                <button className="modal__close" onClick={onClose} aria-label="Close">✕</button>
 
-                {a.thumbnail && (
-                    <div className="modal__thumb">
-                        <img src={a.thumbnail} alt={a.name} />
-                        <div className="modal__thumb-fade" />
-                    </div>
-                )}
+                <div className="modal__thumb">
+                    {a.thumbnail && <img src={a.thumbnail} alt={a.name} />}
+                    <div className="modal__thumb-fade" />
+                    <button className="modal__close" onClick={onClose} aria-label="Close">✕</button>
+                </div>
 
                 <div className="modal__body">
                     <div className="modal__top-row">
@@ -116,18 +76,15 @@ export default function LevelModal({ level: a, onClose }) {
                         )}
                     </div>
 
-                    <VideoEmbed url={a.video} label="ACHIEVEMENT" />
-                    <VideoEmbed url={a.showcaseVideo} label="SHOWCASE" />
-
                     <div className="modal__links">
                         {a.video && (
                             <a href={a.video} target="_blank" rel="noopener noreferrer" className="modal__link modal__link--primary">
-                                Open Achievement ↗
+                                Watch Achievement ↗
                             </a>
                         )}
                         {a.showcaseVideo && (
                             <a href={a.showcaseVideo} target="_blank" rel="noopener noreferrer" className="modal__link">
-                                Open Showcase ↗
+                                Level Showcase ↗
                             </a>
                         )}
                     </div>

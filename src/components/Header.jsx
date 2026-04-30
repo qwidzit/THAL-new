@@ -195,21 +195,18 @@ export default function Header({
 
                         <div className="flt-section">
                             <span className="flt-lbl">SORT</span>
-                            <div className="flt-sort-row">
-                                <select
-                                    className="flt-select"
-                                    value={sort}
-                                    onChange={e => setSort(e.target.value)}
-                                >
-                                    <option value="rank">Rank</option>
-                                    <option value="name">Name</option>
-                                    <option value="length">Length</option>
-                                    <option value="date">Date</option>
-                                </select>
-                                <button className="hd__sort-dir" onClick={setSortDir}>
-                                    {sortDir === 'asc' ? '↑' : '↓'}
-                                </button>
+                            <div className="flt-sort-btns">
+                                {SORT_OPTS.map(o => (
+                                    <button
+                                        key={o.value}
+                                        className={`flt-sort-btn${sort === o.value ? ' is-active' : ''}`}
+                                        onClick={() => setSort(o.value)}
+                                    >{o.label}</button>
+                                ))}
                             </div>
+                            <button className="flt-dir-btn" onClick={setSortDir}>
+                                {sortDir === 'asc' ? '↑  Ascending' : '↓  Descending'}
+                            </button>
                         </div>
 
                         <div className="flt-section">
