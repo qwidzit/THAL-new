@@ -38,8 +38,7 @@ const DATA_MAP = {
 }
 
 const ALL_LISTS_COUNT =
-    achievementsData.length + pendingData.length + legacyData.length +
-    timelineData.length + platformersData.length + platformerTimelineData.length
+    achievementsData.length + pendingData.length + legacyData.length + platformersData.length
 
 function parseRoute() {
     const parts = window.location.pathname.split('/').filter(Boolean)
