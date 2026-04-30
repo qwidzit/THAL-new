@@ -29,8 +29,7 @@ body { background: oklch(15% 0.005 260); }
 .hd__nav-btn.is-active { background: var(--acc); color: var(--bg); font-weight: 700; }
 
 /* Logo: image only, 40x40, no background box */
-.hd__logo { background: transparent; padding: 0; gap: 0; }
-.hd__logo--home { cursor: pointer; }
+.hd__logo { background: transparent; padding: 0; gap: 0; cursor: pointer; }
 .hd__logo-square { width: 40px; height: 40px; object-fit: contain; background: transparent; }
 
 /* Custom sort dropdown */
@@ -148,9 +147,6 @@ body { background: oklch(15% 0.005 260); }
     z-index: 0;
     pointer-events: none;
 }
-
-.app-bg__img, .app-bg__tint, .app-bg__grid { pointer-events: none; }
-
 .app-bg__img {
     position: absolute; inset: -40px;
     background-size: cover;
@@ -1234,12 +1230,11 @@ body { background: oklch(15% 0.005 260); }
     .home-change__date { flex-basis: 100%; }
 }
 
-/* ── Discord + mobile page switch group ─────────── */
-.hd__nav-end {
-    align-self: stretch;
+/* ── Discord icon ────────────────────────────────── */
+.hd__center {
     display: flex;
     align-items: stretch;
-    gap: 8px;
+    gap: 10px;
 }
 
 .hd__discord {
@@ -1452,14 +1447,11 @@ body { background: oklch(15% 0.005 260); }
 
 @media (max-width: 640px) {
     .lb { padding: 24px 16px 60px; overflow-x: hidden; }
-    .lb__layout { gap: 12px; min-width: 0; }
+    .lb__layout { gap: 12px; }
     .lb__layout.has-detail { grid-template-columns: 1fr; }
-    .lb__list { min-width: 0; overflow: hidden; }
     .lb__detail--sidebar { display: none !important; }
     .lb__detail--inline { display: block; margin-top: 4px; }
-    .lb__row { gap: 8px; padding: 8px 10px; }
-    .lb__xp-total { font-size: 11px; }
-    .hd__nav-end { align-items: center; align-self: center; }
+    .hd__center { align-items: center; }
     .hd__discord { height: 40px; }
 }
 

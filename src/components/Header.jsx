@@ -81,29 +81,29 @@ export default function Header({
                         </div>
                     </div>
 
-                    <nav className="hd__nav">
-                        {TABS.map(t => (
-                            <button
-                                key={t}
-                                className={`hd__nav-btn${active === t ? ' is-active' : ''}`}
-                                onClick={() => setActive(t)}
-                            >
-                                {t}
-                            </button>
-                        ))}
-                    </nav>
-
-                    <div className="hd__nav-end">
+                    <div className="hd__center">
                         <a href="https://discord.gg/REPLACE_ME" className="hd__discord" target="_blank" rel="noopener noreferrer" aria-label="Discord">
                             <DiscordIcon />
                         </a>
-                        <button className="hd__nav-mobile-btn" onClick={() => setShowNav(true)}>
-                            <span>{active}</span>
-                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                                <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-                            </svg>
-                        </button>
+                        <nav className="hd__nav">
+                            {TABS.map(t => (
+                                <button
+                                    key={t}
+                                    className={`hd__nav-btn${active === t ? ' is-active' : ''}`}
+                                    onClick={() => setActive(t)}
+                                >
+                                    {t}
+                                </button>
+                            ))}
+                        </nav>
                     </div>
+
+                    <button className="hd__nav-mobile-btn" onClick={() => setShowNav(true)}>
+                        <span>{active}</span>
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                            <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+                        </svg>
+                    </button>
                 </div>
 
                 {!isListless(active) && <div className="hd__controls">
@@ -128,8 +128,14 @@ export default function Header({
                     </div>
 
                     <div className="hd__mode-toggle">
-                        <button className={mode === 'classic' ? 'is-active' : ''} onClick={() => setMode('classic')}>Classic</button>
-                        <button className={mode === 'platformer' ? 'is-active' : ''} onClick={() => setMode('platformer')}>Platformer</button>
+                        <button
+                            className={mode === 'classic' ? 'is-active' : ''}
+                            onClick={() => setMode('classic')}
+                        >Classic</button>
+                        <button
+                            className={mode === 'platformer' ? 'is-active' : ''}
+                            onClick={() => setMode('platformer')}
+                        >Platformer</button>
                     </div>
 
                     <button className="hd__filter-btn" onClick={() => setShowFilters(true)}>
@@ -151,24 +157,35 @@ export default function Header({
                                     key={t}
                                     className={`hd__chip${activeTags.has(t) ? ' is-on' : ''}`}
                                     onClick={() => toggleTag(t)}
-                                >{t}</button>
+                                >
+                                    {t}
+                                </button>
                             ))}
                         </div>
                     </div>
                 )}
             </header>
 
+            {/* Mobile: nav + mode drawer */}
             {showNav && (
                 <div className="flt-overlay" onClick={() => setShowNav(false)}>
                     <div className="flt-drawer" onClick={e => e.stopPropagation()}>
                         <div className="flt-drawer__handle" />
+
                         <div className="flt-section">
                             <span className="flt-lbl">MODE</span>
                             <div className="hd__mode-toggle">
-                                <button className={mode === 'classic' ? 'is-active' : ''} onClick={() => setMode('classic')}>Classic</button>
-                                <button className={mode === 'platformer' ? 'is-active' : ''} onClick={() => setMode('platformer')}>Platformer</button>
+                                <button
+                                    className={mode === 'classic' ? 'is-active' : ''}
+                                    onClick={() => setMode('classic')}
+                                >Classic</button>
+                                <button
+                                    className={mode === 'platformer' ? 'is-active' : ''}
+                                    onClick={() => setMode('platformer')}
+                                >Platformer</button>
                             </div>
                         </div>
+
                         <div className="flt-section">
                             <span className="flt-lbl">PAGE</span>
                             <div className="flt-tabs">
@@ -185,10 +202,12 @@ export default function Header({
                 </div>
             )}
 
+            {/* Mobile: sort + filter drawer */}
             {showFilters && (
                 <div className="flt-overlay" onClick={() => setShowFilters(false)}>
                     <div className="flt-drawer" onClick={e => e.stopPropagation()}>
                         <div className="flt-drawer__handle" />
+
                         <div className="flt-section">
                             <span className="flt-lbl">SORT</span>
                             <div className="flt-sort-btns">
@@ -204,6 +223,7 @@ export default function Header({
                                 {sortDir === 'asc' ? '↑  Ascending' : '↓  Descending'}
                             </button>
                         </div>
+
                         <div className="flt-section">
                             <span className="flt-lbl">FILTER</span>
                             <div className="hd__chips">
@@ -212,10 +232,13 @@ export default function Header({
                                         key={t}
                                         className={`hd__chip${activeTags.has(t) ? ' is-on' : ''}`}
                                         onClick={() => toggleTag(t)}
-                                    >{t}</button>
+                                    >
+                                        {t}
+                                    </button>
                                 ))}
                             </div>
                         </div>
+
                         <button className="flt-done" onClick={() => setShowFilters(false)}>Done</button>
                     </div>
                 </div>
