@@ -1,4 +1,5 @@
 ﻿import { useState } from 'react'
+import { xpFor } from '../utils/xp'
 import achievementsData from '../../data/achievements.json'
 import pendingData from '../../data/pending.json'
 import platformersData from '../../data/platformers.json'
@@ -11,24 +12,12 @@ function fmt(iso) {
     return `${d.getDate()} ${MONTHS[d.getMonth()]} ${String(d.getFullYear()).slice(2)}`
 }
 
-function xpFor(rank) {
-    return Math.max(1, Math.round(1000 / rank))
-}
+const SOURCE_LABEL = { classic: 'Classic', pending: 'Pending', platformer: 'Platformer' }
 
-const SOURCE_LABEL = {
-    classic:    'Classic',
-    pending:    'Pending',
-    platformer: 'Platformer',
-}
-
-function buildLeaderboard() {
-    const entries = [
-        ...achievementsData.filter(e => e.rank != null).map(e => ({ ...e, _src: 'classic' })),
-        ...pendingData.filter(e => e.rank != null).map(e => ({ ...e, _src: 'pending' })),
-        ...platformersData.filter(e => e.rank != null).map(e => ({ ...e, _src: 'platformer' })),
-    ]
+function buildBoard(entries) {
     const map = new Map()
     for (const e of entries) {
+        if (!e.player) continue
         if (!map.has(e.player)) map.set(e.player, [])
         map.get(e.player).push(e)
     }
@@ -39,28 +28,42 @@ function buildLeaderboard() {
     }).sort((a, b) => b.totalXP - a.totalXP)
 }
 
-const LEADERBOARD = buildLeaderboard()
+const BOARDS = {
+    classic: buildBoard([
+        ...achievementsData.filter(e => e.rank != null).map(e => ({ ...e, _src: 'classic' })),
+        ...pendingData.filter(e => e.rank != null).map(e => ({ ...e, _src: 'pending' })),
+    ]),
+    platformer: buildBoard(
+        platformersData.filter(e => e.rank != null).map(e => ({ ...e, _src: 'platformer' }))
+    ),
+}
+
 const MEDALS = ['gold', 'silver', 'bronze']
 
 export default function LeaderboardPage() {
+    const [mode, setMode] = useState('classic')
     const [sel, setSel] = useState(null)
-    const player = sel != null ? LEADERBOARD[sel] : null
+
+    const leaderboard = BOARDS[mode]
+    const player = sel != null ? leaderboard[sel] : null
+
+    function switchMode(m) { setMode(m); setSel(null) }
 
     return (
         <div className="lb">
             <div className="lb__head">
                 <h1 className="lb__title">Leaderboard</h1>
-                <p className="lb__sub">{LEADERBOARD.length} players · ranked by total XP</p>
+                <div className="lb__mode-toggle">
+                    <button className={`lb__mode-btn${mode === 'classic' ? ' is-active' : ''}`} onClick={() => switchMode('classic')}>Classic</button>
+                    <button className={`lb__mode-btn${mode === 'platformer' ? ' is-active' : ''}`} onClick={() => switchMode('platformer')}>Platformer</button>
+                </div>
+                <p className="lb__sub">{leaderboard.length} players · ranked by total XP</p>
             </div>
 
             <div className={`lb__layout${player ? ' has-detail' : ''}`}>
                 <div className="lb__list">
-                    {LEADERBOARD.map((p, i) => (
-                        <div
-                            key={p.name}
-                            className={`lb__row${sel === i ? ' is-sel' : ''}`}
-                            onClick={() => setSel(sel === i ? null : i)}
-                        >
+                    {leaderboard.map((p, i) => (
+                        <div key={p.name} className={`lb__row${sel === i ? ' is-sel' : ''}`} onClick={() => setSel(sel === i ? null : i)}>
                             <span className={`lb__pos${i < 3 ? ' lb__pos--' + MEDALS[i] : ''}`}>{i + 1}</span>
                             <div className="lb__pinfo">
                                 <span className="lb__pname">{p.name}</span>

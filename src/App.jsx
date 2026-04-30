@@ -4,6 +4,7 @@ import LevelList from './components/LevelList'
 import LevelModal from './components/LevelModal'
 import HomePage from './pages/HomePage'
 import LeaderboardPage from './pages/LeaderboardPage'
+import ModLeaderboardPage from './pages/ModLeaderboardPage'
 
 import achievementsData from '../data/achievements.json'
 import pendingData from '../data/pending.json'
@@ -42,12 +43,13 @@ const ALL_LISTS_COUNT =
     achievementsData.length + pendingData.length + legacyData.length +
     timelineData.length + platformersData.length + platformerTimelineData.length
 
-const NO_LIST = new Set(['HOME', 'LEADERBOARD'])
+const NO_LIST = new Set(['HOME', 'LEADERBOARD', 'MODLB'])
 
 function parseRoute() {
     const parts = window.location.pathname.split('/').filter(Boolean)
     if (parts.length === 0 || parts[0] === 'home') return { mode: 'classic', active: 'HOME' }
     if (parts[0] === 'leaderboard') return { mode: 'classic', active: 'LEADERBOARD' }
+    if (parts[0] === 'mod-leaderboard') return { mode: 'classic', active: 'MODLB' }
     const modeMap = { classic: 'classic', plat: 'platformer' }
     const tabMap = { pending: 'PENDING', removed: 'REMOVED', timeline: 'TIMELINE' }
     const mode = modeMap[parts[0]] || 'classic'
@@ -75,6 +77,11 @@ export default function App() {
         if (newActive === 'LEADERBOARD') {
             history.pushState({}, '', '/leaderboard')
             setRoute({ mode: newMode, active: 'LEADERBOARD' })
+            return
+        }
+        if (newActive === 'MODLB') {
+            history.pushState({}, '', '/mod-leaderboard')
+            setRoute({ mode: newMode, active: 'MODLB' })
             return
         }
         const modeSlug = newMode === 'platformer' ? 'plat' : 'classic'
@@ -177,14 +184,16 @@ export default function App() {
                 ? <HomePage totalCount={achievementsData.length + pendingData.length + legacyData.length + platformersData.length} />
                 : active === 'LEADERBOARD'
                     ? <LeaderboardPage />
-                    : <LevelList
-                        data={filteredData}
-                        totalCount={rawData.length}
-                        activeTags={activeTags}
-                        toggleTag={toggleTag}
-                        isTimeline={active === 'TIMELINE'}
-                        onCardClick={setSelectedLevel}
-                    />
+                    : active === 'MODLB'
+                        ? <ModLeaderboardPage />
+                        : <LevelList
+                            data={filteredData}
+                            totalCount={rawData.length}
+                            activeTags={activeTags}
+                            toggleTag={toggleTag}
+                            isTimeline={active === 'TIMELINE'}
+                            onCardClick={setSelectedLevel}
+                        />
             }
 
             {selectedLevel && (

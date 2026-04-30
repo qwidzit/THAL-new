@@ -52,7 +52,7 @@ const DiscordIcon = () => (
     </svg>
 )
 
-const isListless = t => t === 'HOME' || t === 'LEADERBOARD'
+const isListless = t => t === 'HOME' || t === 'LEADERBOARD' || t === 'MODLB'
 
 export default function Header({
                                    mode, setMode,

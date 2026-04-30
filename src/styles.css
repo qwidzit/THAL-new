@@ -1,6 +1,6 @@
 ﻿/* ── Reset ─────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 16px; }
+html { font-size: 16px; scrollbar-gutter: stable; }
 body { background: oklch(15% 0.005 260); }
 
 /* ── Design Tokens ─────────────────────────────────────── */
@@ -1233,7 +1233,7 @@ body { background: oklch(15% 0.005 260); }
 /* ── Discord icon ────────────────────────────────── */
 .hd__center {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     gap: 10px;
 }
 
@@ -1242,7 +1242,6 @@ body { background: oklch(15% 0.005 260); }
     align-items: center;
     justify-content: center;
     width: 32px;
-    height: 32px;
     border-radius: 6px;
     color: var(--ink-3);
     border: 1px solid var(--line);
@@ -1450,3 +1449,29 @@ body { background: oklch(15% 0.005 260); }
     .lb { padding: 24px 16px 60px; }
     .lb__layout.has-detail { grid-template-columns: 1fr; }
 }
+
+/* ── Leaderboard mode toggle ─────────────────────── */
+.lb__mode-toggle {
+    display: flex;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 3px;
+    gap: 2px;
+    width: fit-content;
+}
+.lb__mode-btn {
+    background: transparent;
+    border: none;
+    padding: 6px 18px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    color: var(--ink-2);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all .15s;
+}
+.lb__mode-btn:hover { color: var(--ink); background: var(--bg-3); }
+.lb__mode-btn.is-active { background: var(--acc); color: var(--bg); }
