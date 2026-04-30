@@ -1,121 +1,286 @@
-﻿import { useState, useEffect } from 'react'
+﻿import { useState, useEffect, useRef } from 'react'
 
-const DATASETS = [
-    { key: 'classic-main',        label: 'Classic — Main',             file: 'achievements'      },
-    { key: 'classic-pending',     label: 'Classic — Pending',          file: 'pending'           },
-    { key: 'classic-removed',     label: 'Classic — Removed',          file: 'legacy'            },
-    { key: 'classic-timeline',    label: 'Classic — Timeline',         file: 'timeline'          },
-    { key: 'platformer-main',     label: 'Platformer — Main',          file: 'platformers'       },
-    { key: 'platformer-timeline', label: 'Platformer — Timeline',      file: 'platformertimeline'},
+const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
+function fmt(iso) {
+    if (!iso) return '—'
+    const d = new Date(iso)
+    return `${d.getDate()} ${MONTHS[d.getMonth()]} ${String(d.getFullYear()).slice(2)}`
+}
+
+const ALL_TAGS = [
+    'Level','Challenge','2P','Low Hertz','Progress','Consistency',
+    'Verified','Rated','Formerly Rated','CBF','Tentative',
+    'Outdated Version','Coin Route','Noclip','Speedhack','Mobile','Miscellaneous',
+    'Platformer','Deathless','Speedrun',
 ]
 
-export default function AdminList({ auth, dataset, setDataset }) {
+function youtubeEmbed(url) {
+    if (!url) return null
+    const m =
+        url.match(/youtu\.be\/([^?&\s]+)/) ||
+        url.match(/youtube\.com\/(?:watch\?v=|live\/)([^?&\s]+)/)
+    if (!m) return null
+    const t = url.match(/[?&]t=(\d+)/)
+    return `https://www.youtube.com/embed/${m[1]}${t ? `?start=${t[1]}` : ''}`
+}
+
+function EditPanel({ entry, onSave, onCancel }) {
+    const [form, setForm] = useState({
+        name:         entry.name         ?? '',
+        player:       entry.player       ?? '',
+        date:         entry.date         ?? '',
+        length:       entry.length       ?? '',
+        version:      entry.version      ?? '2.2',
+        levelID:      entry.levelID      ?? '',
+        video:        entry.video        ?? '',
+        showcaseVideo:entry.showcaseVideo?? '',
+        thumbnail:    entry.thumbnail    ?? '',
+        submitter:    entry.submitter    ?? '',
+        tags:         entry.tags         ?? [],
+    })
+
+    function set(k, v) { setForm(f => ({ ...f, [k]: v })) }
+
+    function toggleTag(t) {
+        setForm(f => {
+            const tags = f.tags.includes(t) ? f.tags.filter(x => x !== t) : [...f.tags, t]
+            return { ...f, tags }
+        })
+    }
+
+    function handleSave() {
+        const updated = {
+            ...entry,
+            name:          form.name.trim(),
+            player:        form.player.trim(),
+            date:          form.date       || undefined,
+            length:        form.length     ? Number(form.length)  : undefined,
+            version:       form.version    || '2.2',
+            levelID:       form.levelID    ? Number(form.levelID) : undefined,
+            video:         form.video.trim()         || undefined,
+            showcaseVideo: form.showcaseVideo.trim() || undefined,
+            thumbnail:     form.thumbnail.trim()     || undefined,
+            submitter:     form.submitter.trim()     || undefined,
+            tags:          form.tags,
+        }
+        Object.keys(updated).forEach(k => updated[k] === undefined && delete updated[k])
+        onSave(updated)
+    }
+
+    const embedV = youtubeEmbed(form.video)
+    const embedS = youtubeEmbed(form.showcaseVideo)
+
+    return (
+        <div className="adm-edit-panel">
+            <div className="adm-add__grid">
+                <label className="adm-field">
+                    <span>Level Name</span>
+                    <input value={form.name} onChange={e => set('name', e.target.value)} />
+                </label>
+                <label className="adm-field">
+                    <span>Player</span>
+                    <input value={form.player} onChange={e => set('player', e.target.value)} />
+                </label>
+                <label className="adm-field">
+                    <span>Date (YYYY-MM-DD)</span>
+                    <input type="date" value={form.date} onChange={e => set('date', e.target.value)} />
+                </label>
+                <label className="adm-field">
+                    <span>Length (seconds)</span>
+                    <input type="number" value={form.length} onChange={e => set('length', e.target.value)} />
+                </label>
+                <label className="adm-field">
+                    <span>Version</span>
+                    <input value={form.version} onChange={e => set('version', e.target.value)} />
+                </label>
+                <label className="adm-field">
+                    <span>Level ID</span>
+                    <input type="number" value={form.levelID} onChange={e => set('levelID', e.target.value)} />
+                </label>
+                <label className="adm-field">
+                    <span>Submitter</span>
+                    <input value={form.submitter} onChange={e => set('submitter', e.target.value)} />
+                </label>
+            </div>
+
+            <div className="adm-field">
+                <span>Achievement Video URL</span>
+                <input value={form.video} onChange={e => set('video', e.target.value)} placeholder="https://youtu.be/..." />
+            </div>
+            {embedV && <div className="adm-embed"><iframe src={embedV} title="Achievement" allowFullScreen /></div>}
+
+            <div className="adm-field">
+                <span>Showcase Video URL</span>
+                <input value={form.showcaseVideo} onChange={e => set('showcaseVideo', e.target.value)} placeholder="https://youtu.be/..." />
+            </div>
+            {embedS && <div className="adm-embed"><iframe src={embedS} title="Showcase" allowFullScreen /></div>}
+
+            <div className="adm-field">
+                <span>Thumbnail URL</span>
+                <input value={form.thumbnail} onChange={e => set('thumbnail', e.target.value)} placeholder="https://img.youtube.com/vi/.../maxresdefault.jpg" />
+            </div>
+            {form.thumbnail && (
+                <div className="adm-thumb-preview"><img src={form.thumbnail} alt="thumbnail preview" /></div>
+            )}
+
+            <div className="adm-field">
+                <span>Tags</span>
+                <div className="adm-tag-grid">
+                    {ALL_TAGS.map(t => (
+                        <button
+                            key={t}
+                            type="button"
+                            className={`adm-tag-btn${form.tags.includes(t) ? ' is-on' : ''}`}
+                            onClick={() => toggleTag(t)}
+                        >{t}</button>
+                    ))}
+                </div>
+            </div>
+
+            <div className="adm-edit-panel__actions">
+                <button className="adm-btn adm-btn--primary" onClick={handleSave}>Apply changes</button>
+                <button className="adm-btn adm-btn--ghost" onClick={onCancel}>Cancel</button>
+            </div>
+        </div>
+    )
+}
+
+export default function AdminList({ token, fileKey }) {
     const [entries, setEntries] = useState([])
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
-    const [status, setStatus] = useState(null)
-    const [dragIndex, setDragIndex] = useState(null)
-
-    const ds = DATASETS.find(d => d.key === dataset) || DATASETS[0]
+    const [status, setStatus] = useState('')
+    const [dirty, setDirty] = useState(false)
+    const [editingIdx, setEditingIdx] = useState(null)
+    const dragIdx = useRef(null)
 
     useEffect(() => {
         setLoading(true)
-        setStatus(null)
-        fetch(`/api/data?file=${ds.file}`, {
-            headers: { Authorization: `Basic ${auth}` },
+        setDirty(false)
+        setStatus('')
+        setEditingIdx(null)
+        fetch(`/api/data?file=${fileKey}`, {
+            headers: { Authorization: 'Basic ' + token },
         })
             .then(r => r.json())
-            .then(data => { setEntries(data); setLoading(false) })
-            .catch(() => { setStatus({ ok: false, msg: 'Failed to load data' }); setLoading(false) })
-    }, [dataset, auth])
+            .then(d => { setEntries(d); setLoading(false) })
+            .catch(() => { setStatus('Failed to load data'); setLoading(false) })
+    }, [fileKey, token])
 
-    const rerank = (list) => list.map((e, i) => ({ ...e, rank: i + 1 }))
+    function handleDragStart(i) { dragIdx.current = i }
 
-    const handleDragStart = (i) => setDragIndex(i)
-    const handleDragOver = (e, i) => {
-        e.preventDefault()
-        if (dragIndex === null || dragIndex === i) return
+    function handleDrop(i) {
+        const from = dragIdx.current
+        if (from === null || from === i) return
         const next = [...entries]
-        const [item] = next.splice(dragIndex, 1)
-        next.splice(i, 0, item)
-        setEntries(rerank(next))
-        setDragIndex(i)
-    }
-    const handleDragEnd = () => setDragIndex(null)
-
-    const handleDelete = (idx) => {
-        if (!confirm(`Delete "${entries[idx].name}"?`)) return
-        setEntries(rerank(entries.filter((_, i) => i !== idx)))
+        const [moved] = next.splice(from, 1)
+        next.splice(i, 0, moved)
+        const reranked = next.map((e, idx) => ({ ...e, rank: idx + 1 }))
+        setEntries(reranked)
+        setDirty(true)
+        dragIdx.current = null
     }
 
-    const handleSave = async () => {
+    function handleDelete(i) {
+        if (!confirm(`Delete "${entries[i].name}"?`)) return
+        const next = entries.filter((_, idx) => idx !== i)
+        const reranked = next.map((e, idx) => ({ ...e, rank: idx + 1 }))
+        setEntries(reranked)
+        setDirty(true)
+        if (editingIdx === i) setEditingIdx(null)
+    }
+
+    function handleEditSave(i, updated) {
+        setEntries(entries.map((e, idx) => idx === i ? updated : e))
+        setDirty(true)
+        setEditingIdx(null)
+    }
+
+    async function handleSave() {
         setSaving(true)
-        setStatus(null)
+        setStatus('')
         try {
-            const res = await fetch('/api/save', {
+            const res = await fetch(`/api/save?file=${fileKey}`, {
                 method: 'POST',
-                headers: { Authorization: `Basic ${auth}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ file: ds.file, data: entries }),
+                headers: {
+                    Authorization: 'Basic ' + token,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(entries),
             })
+            const data = await res.json()
             if (res.ok) {
-                setStatus({ ok: true, msg: 'Saved! Site will rebuild in ~30–60 seconds.' })
+                setStatus('Saved! Rebuild triggered (~30s)')
+                setDirty(false)
             } else {
-                const err = await res.json().catch(() => ({}))
-                setStatus({ ok: false, msg: err.error || 'Save failed' })
+                setStatus('Error: ' + (data.error || res.status))
             }
-        } catch {
-            setStatus({ ok: false, msg: 'Network error' })
+        } catch (e) {
+            setStatus('Network error')
         }
         setSaving(false)
     }
 
+    if (loading) return <div className="adm-status">Loading…</div>
+
     return (
-        <div className="adm-list">
-            <div className="adm-list__toolbar">
-                <select value={dataset} onChange={e => setDataset(e.target.value)}>
-                    {DATASETS.map(d => <option key={d.key} value={d.key}>{d.label}</option>)}
-                </select>
-                <span className="adm-list__count">{entries.length} entries</span>
-                <button className="adm-list__save" onClick={handleSave} disabled={saving || loading}>
-                    {saving ? 'Saving…' : 'Save Changes'}
+        <div className="adm-list-wrap">
+            <div className="adm-list-toolbar">
+                <span className="adm-list-count">{entries.length} entries</span>
+                {status && <span className="adm-list-status">{status}</span>}
+                <button
+                    className="adm-btn adm-btn--primary"
+                    onClick={handleSave}
+                    disabled={!dirty || saving}
+                >
+                    {saving ? 'Saving…' : 'Save changes'}
                 </button>
             </div>
 
-            {status && (
-                <div className={`adm-status ${status.ok ? 'is-ok' : 'is-err'}`}>{status.msg}</div>
-            )}
-
-            {loading ? (
-                <div className="adm-list__loading">Loading…</div>
-            ) : (
-                <div className="adm-list__entries">
-                    {entries.map((entry, i) => (
+            <div className="adm-list">
+                {entries.map((e, i) => (
+                    <div key={e.id ?? i} className="adm-row-wrap">
                         <div
-                            key={entry.id ?? i}
-                            className={`adm-entry${dragIndex === i ? ' is-dragging' : ''}`}
-                            draggable
+                            className={`adm-row${editingIdx === i ? ' is-editing' : ''}`}
+                            draggable={editingIdx !== i}
                             onDragStart={() => handleDragStart(i)}
-                            onDragOver={e => handleDragOver(e, i)}
-                            onDragEnd={handleDragEnd}
+                            onDragOver={ev => ev.preventDefault()}
+                            onDrop={() => handleDrop(i)}
                         >
-                            <div className="adm-entry__drag">⠿</div>
-                            <div className="adm-entry__rank">#{entry.rank ?? i + 1}</div>
-                            {entry.thumbnail
-                                ? <img className="adm-entry__thumb" src={entry.thumbnail} alt="" loading="lazy" />
-                                : <div className="adm-entry__thumb adm-entry__thumb--empty" />
-                            }
-                            <div className="adm-entry__info">
-                                <div className="adm-entry__name">{entry.name}</div>
-                                <div className="adm-entry__player">by {entry.player}</div>
+                            <span className="adm-row__drag">⠿</span>
+                            <span className="adm-row__rank">#{e.rank ?? i + 1}</span>
+                            <div className="adm-row__thumb">
+                                {e.thumbnail
+                                    ? <img src={e.thumbnail} alt="" />
+                                    : <div className="adm-row__thumb-ph" />
+                                }
                             </div>
-                            <div className="adm-entry__tags">
-                                {(entry.tags ?? []).map(t => <span key={t} className="adm-entry__tag">{t}</span>)}
+                            <div className="adm-row__info">
+                                <span className="adm-row__name">{e.name}</span>
+                                <span className="adm-row__sub">by {e.player} · {fmt(e.date)}</span>
                             </div>
-                            <button className="adm-entry__del" onClick={() => handleDelete(i)} title="Delete">✕</button>
+                            <div className="adm-row__tags">
+                                {(e.tags ?? []).map(t => <span key={t} className="adm-row__tag">{t}</span>)}
+                            </div>
+                            <button
+                                className="adm-btn"
+                                onClick={() => setEditingIdx(editingIdx === i ? null : i)}
+                            >
+                                {editingIdx === i ? 'Close' : 'Edit'}
+                            </button>
+                            <button className="adm-btn adm-btn--danger" onClick={() => handleDelete(i)}>✕</button>
                         </div>
-                    ))}
-                </div>
-            )}
+
+                        {editingIdx === i && (
+                            <EditPanel
+                                entry={e}
+                                onSave={updated => handleEditSave(i, updated)}
+                                onCancel={() => setEditingIdx(null)}
+                            />
+                        )}
+                    </div>
+                ))}
+            </div>
         </div>
     )
 }

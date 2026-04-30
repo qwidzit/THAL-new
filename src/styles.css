@@ -1049,3 +1049,32 @@ body { background: oklch(15% 0.005 260); }
     transition: background .15s, color .15s, border-color .15s;
 }
 .flt-dir-btn:hover { color: var(--ink); border-color: var(--line-2); }
+
+/* ── Edit panel ─────────────────────────────────── */
+.adm-row-wrap {
+    display: flex;
+    flex-direction: column;
+}
+
+.adm-row.is-editing {
+    border-color: var(--acc);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.adm-edit-panel {
+    background: var(--bg-3);
+    border: 1px solid var(--acc);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.adm-edit-panel__actions {
+    display: flex;
+    gap: 10px;
+    padding-top: 4px;
+}
